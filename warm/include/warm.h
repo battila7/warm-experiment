@@ -24,8 +24,11 @@ typedef unsigned long long warm_data_t;
 
 /**
  * Stores the number of warm_data_t-s used to represent a warm number.
+ *
+ * When targeting wasm32-unknown-wasi, unsigned long is a 32 bit unsigned integer, 
+ * corresponding to the i32 WASM type.
  */
-typedef unsigned long long warm_size_t;
+typedef unsigned long warm_size_t;
 
 /**
  * A warm number is just an array of warm_data_t-s. However, to make it easier to work with
