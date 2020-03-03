@@ -138,7 +138,7 @@
             local.get $result_limb
             i64.store
             
-            ;; Otherwise move to the next limb.
+            ;; Move to the next limb.
             local.get $limb_index
             i32.const 1
             i32.add
@@ -157,13 +157,8 @@
             i32.eq
             br_if 1
 
-            ;; Increment the limb we'are working on.            
-            local.get $limb_index
-            i32.const 1
-            i32.add
-            local.tee $limb_index
-
             ;; Calculate the byte offset of the current limb.
+            local.get $limb_index            
             i32.const 8
             i32.mul
             local.tee $limb_ptr_offset
@@ -194,6 +189,11 @@
             local.get $result_limb
             i64.store
 
+            ;; Move to the next limb.       
+            local.get $limb_index
+            i32.const 1
+            i32.add
+            local.set $limb_index
             br 0
           end
           end    
@@ -206,13 +206,8 @@
             i32.eq
             br_if 1
 
-            ;; Increment the limb we'are working on.            
-            local.get $limb_index
-            i32.const 1
-            i32.add
-            local.tee $limb_index
-
             ;; Calculate the byte offset of the current limb.
+            local.get $limb_index
             i32.const 8
             i32.mul
             local.tee $limb_ptr_offset
@@ -230,6 +225,11 @@
             ;; Store it in the result.
             i64.store
 
+            ;; Move to the next limb.        
+            local.get $limb_index
+            i32.const 1
+            i32.add
+            local.set $limb_index
             br 0
           end
           end

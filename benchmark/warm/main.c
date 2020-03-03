@@ -21,14 +21,15 @@ int main(int argc, char **argv)
 
     b.size = 2;
     b.data = malloc(size * sizeof(warm_data_t));
-    b.data[0] = 10;
-    b.data[1] = 67;
+    b.data[0] = -1;
+    b.data[1] = -1;
 
 
-    c.size = 2;
-    c.data = malloc(size * sizeof(warm_data_t));
-    c.data[0] = 20;
+    c.size = 3;
+    c.data = malloc(3 * sizeof(warm_data_t));
+    c.data[0] = 1;
     c.data[1] = 30;
+    c.data[2] = 68;
 
     warm_add(&a, &b, &c);
 
@@ -37,6 +38,7 @@ int main(int argc, char **argv)
     print64(*a.data);
     printf("%llu\n", *(a.data + 1));
     printf("%llu\n", *(a.data + 2));
+    printf("%llu\n", *(a.data + 3));
 
     return 0;
 }
