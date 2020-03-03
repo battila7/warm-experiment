@@ -73,13 +73,19 @@
         local.get $result_data_ptr
         i32.store offset=4
 
-
         ;; First add loop, which uses actually adds the left operand to the right operand.
         ;; We start from the 0th limb up to the size of the smaller operand.
         i32.const 0
         local.tee $limb_index
         local.set $old_carry
+        block
         loop
+            ;; If we ran out of the smaller operand, then break.
+            local.get $smaller_size
+            local.get $limb_index
+            i32.eq
+            br_if 1
+
             ;; Calculate the byte offset of the current limb.
             local.get $limb_index
             i32.const 8
@@ -131,14 +137,6 @@
             i32.add
             local.get $result_limb
             i64.store
-
-            ;; If we ran out of the smaller operand, then break.
-            local.get $smaller_size
-            local.get $limb_index
-            i32.sub
-            i32.const 1
-            i32.eq
-            br_if 1
             
             ;; Otherwise move to the next limb.
             local.get $limb_index
@@ -147,16 +145,25 @@
             local.set $limb_index
             br 0
         end
+        end
 
         local.get $old_carry
         if ;; If there's carry, then continue with subsequent increments.
+          block
           loop
-            ;; Increment the limb we'are working on and
-            ;; calculate the byte offset of the current limb.
+            ;; If we ran out of the operand, then break.
+            local.get $larger_size
+            local.get $limb_index
+            i32.eq
+            br_if 1
+
+            ;; Increment the limb we'are working on.            
             local.get $limb_index
             i32.const 1
             i32.add
             local.tee $limb_index
+
+            ;; Calculate the byte offset of the current limb.
             i32.const 8
             i32.mul
             local.tee $limb_ptr_offset
@@ -187,28 +194,29 @@
             local.get $result_limb
             i64.store
 
+            br 0
+          end
+          end    
+        else ;; Otherwise, continue with simple copies.
+          block
+          loop
             ;; If we ran out of the operand, then break.
             local.get $larger_size
             local.get $limb_index
-            i32.sub
-            i32.const 1
             i32.eq
             br_if 1
 
-            br 0
-          end          
-        else ;; Otherwise, continue with simple copies.
-          loop
-            ;; Increment the limb we'are working on and
-            ;; calculate the byte offset of the current limb.
+            ;; Increment the limb we'are working on.            
             local.get $limb_index
             i32.const 1
             i32.add
             local.tee $limb_index
+
+            ;; Calculate the byte offset of the current limb.
             i32.const 8
             i32.mul
             local.tee $limb_ptr_offset
-
+            
             ;; Move to the current result limb.
             local.get $result_data_ptr
             i32.add
@@ -222,23 +230,14 @@
             ;; Store it in the result.
             i64.store
 
-            ;; If we ran out of the operand, then break.
-            local.get $larger_size
-            local.get $limb_index
-            i32.sub
-            i32.const 1
-            i32.eq
-            br_if 1
-
             br 0
+          end
           end
         end
 
         ;; Finish by setting the last limb of the result to 0 or 1 (dependending on the carry).
         local.get $result_data_ptr
         local.get $limb_index
-        i32.const 1
-        i32.add
         i32.const 8
         i32.mul
         i32.add

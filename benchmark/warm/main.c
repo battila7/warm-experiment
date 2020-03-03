@@ -3,22 +3,40 @@
 
 #include "warm.h"
 
+void print32(const unsigned long a)
+{
+    printf("%lu\n", a);
+}
+
+void print64(const unsigned long long a)
+{
+    printf("%llu\n", a);
+}
+
 int main(int argc, char **argv)
 {
     warm_t a, b, c;
 
-    b.size = 1;
-    b.data = malloc(sizeof(warm_data_t));
-    b.data[0] = 49;
+    int size = 2;
 
-    c.size = 1;
-    c.data = malloc(sizeof(warm_data_t));
+    b.size = 2;
+    b.data = malloc(size * sizeof(warm_data_t));
+    b.data[0] = 10;
+    b.data[1] = 67;
+
+
+    c.size = 2;
+    c.data = malloc(size * sizeof(warm_data_t));
     c.data[0] = 20;
+    c.data[1] = 30;
 
     warm_add(&a, &b, &c);
 
-    printf("%lu\n", a.size);
-    printf("%llu\n", *a.data);
+    printf("\nResults\n");
+    print32(a.size);
+    print64(*a.data);
+    printf("%llu\n", *(a.data + 1));
+    printf("%llu\n", *(a.data + 2));
 
     return 0;
 }
