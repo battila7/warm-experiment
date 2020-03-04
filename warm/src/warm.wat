@@ -56,12 +56,6 @@
 
         ;; Set the size of the result to larger_size + 1.
         ;; And allocate memory for the result.
-        i32.const 1
-        local.get $larger_size
-        i32.add
-        local.tee $result_size
-        call $malloc
-        local.set $result_data_ptr
 
         ;; Set result.size.
         local.get $result_ptr
@@ -70,8 +64,8 @@
 
         ;; Set result.data to point to the allocated memory.
         local.get $result_ptr
-        local.get $result_data_ptr
-        i32.store offset=4
+        i32.load offset=4
+        local.set $result_data_ptr
 
         ;; First add loop, which uses actually adds the left operand to the right operand.
         ;; We start from the 0th limb up to the size of the smaller operand.
